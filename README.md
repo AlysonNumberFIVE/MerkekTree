@@ -137,7 +137,74 @@ func main() {
 }
 ```
 
+Running this code will give you the following terminal output.
+
+```
+First -- insert A
+└── A
+Second -- insert B
+    └── B
+└── Y
+    ├── A
+Third -- insert duplicate A
+Error : Hash already exists. Use Update() to update an existing hash
+    └── B
+└── Y
+    ├── A
+Fourth -- insert C, D, E
+        └── B
+    └── X
+        ├── D
+└── Y
+    │   └── A
+    ├── X
+    │   │   └── C
+    │   ├── X
+    │   │   ├── E
+Fifth -- update A to F
+        └── B
+    └── X
+        ├── D
+└── Y
+    │   └── F
+    ├── X
+    │   │   └── C
+    │   ├── X
+    │   │   ├── E
+Sixth -- update F to A again (use A's old hash)
+        └── B
+    └── X
+        ├── D
+└── Y
+    │   └── A
+    ├── X
+    │   │   └── C
+    │   ├── X
+    │   │   ├── E
+Seventh -- update A to M (use F's hash this time)
+        └── B
+    └── X
+        ├── D
+└── Y
+    │   └── M
+    ├── X
+    │   │   └── C
+    │   ├── X
+    │   │   ├── E
+Eighth -- lookup M using A's hash
+data is  M
+Ninth -- lookup M using F's hash
+data is  M
+data is  D
+proofA is  true
+proofA is  true
+proofNull is  false
+proofB is  true
+```
+
 Accompanying code inside of `merkel_tree_test.go` has extensive usecases.
+
+
 
 ## Documentation
 
