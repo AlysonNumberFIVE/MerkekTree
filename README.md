@@ -45,6 +45,100 @@ func VerifyProof(proof *MerkelProof, rootHash []byte) bool
 ```
 Verifies the validity of a `MerkelProof` by using the Merkel Tree verification algorithm.
 
+## How to run it.
+from `main.go`
+```
+func main() {
+
+	tree := InitMerkelTree()
+	fmt.Println("First -- insert A")
+	hashA, err := tree.Insert([]byte("A"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Second -- insert B")
+	hashB, err := tree.Insert([]byte("B"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Third -- insert duplicate A")
+	_, err = tree.Insert([]byte("B"))
+	fmt.Printf("Error : %+v\n", err)
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Fourth -- insert C, D, E")
+	tree.Insert([]byte("C"))
+	tree.Insert([]byte("D"))
+	tree.Insert([]byte("E"))
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Fifth -- update A to F")
+	hashF, err := tree.Update([]byte("F"), hashA)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Sixth -- update F to A again (use A's old hash)")
+	tree.Update([]byte("A"), hashA)
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Seventh -- update A to M (use F's hash this time)")
+	_, err = tree.Update([]byte("M"), hashF)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tree.Visualizer(tree.root, "", false)
+
+	fmt.Println("Eighth -- lookup M using A's hash")
+	nodeM, err := tree.Lookup(hashA)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("data is ", string(nodeM.data))
+
+	fmt.Println("Ninth -- lookup M using F's hash")
+	nodeM, err = tree.Lookup(hashF)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("data is ", string(nodeM.data))
+
+	nodeD, err := tree.Lookup(Hash128([]byte("D")))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("data is ", string(nodeD.data))
+
+	proofA, err := tree.GenerateProof(hashF)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("proofA is ", VerifyProof(proofA, tree.root.hash))
+
+	proofA, err = tree.GenerateProof(hashA)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("proofA is ", VerifyProof(proofA, tree.root.hash))
+
+	proofNull, _ := tree.GenerateProof(Hash128([]byte("4444")))
+	fmt.Println("proofNull is ", VerifyProof(proofNull, tree.root.hash))
+
+	proofB, err := tree.GenerateProof(hashB)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("proofB is ", VerifyProof(proofB, tree.root.hash))
+}
+```
+
+Accompanying code inside of `merkel_tree_test.go` has extensive usecases.
+
 ## Documentation
 
 An accompanying PDF design document accompanies this code and must be treated as a helper for reading this code <b> and not a substitute for going through the code</b>.
