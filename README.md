@@ -1,7 +1,10 @@
 # MerkelTree
-Also, I realized too late that I spelt it Merkel instead of Merkle :'(
 
-## IMPORTANT: There's an accompanying domcument `Merkle Tree Design Document.pdf`. This is a supporting document for the code in this repo as is meant to be read as a companion to this code.
+
+- API reference
+- How to run it
+- Documentation
+- Author
 
 
 ## API reference
