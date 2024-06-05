@@ -15,14 +15,46 @@ This is a repository for a Merket Tree implementation project.  The following op
 - GenerateProof
 - VerifyProof
 
-### Lookup
+### Main Merkel Tree data structures
+`main.go`:
+```
+type MerkelTree struct {
+	root           *Node
+	lookupNodeList map[string]*Mapping
+}
+```
+Holds the root node as well as a hashmap chain lookup list for easy leaf node searching.
+```
+type Mapping struct {
+	node              *Node
+	hashUpdateHistroy [][]byte
+}
+```
+Mapping holds a pointer to the leaf node referenced by the hash key passed into `lookupNodeList`.
 
+`node.go`:
+```
+type Node struct {
+	left  *Node
+	right *Node
+	prev  *Node
+	data  []byte
+	hash  []byte
+}
+```
+Holds node information for leaf and branch nodes. A bidiretional node with 2 children and 1 parent/prev node.
+
+<br>
+<br>
+### Lookup
+`main.go`:
 ```
 func (merkelTree *MerkelTree) Lookup(hash []byte) (*Node, error)
 ```
 Returns a pointer to the leaf node with the requested `hash` and `error` if the hash is invalid/data doesn't exist
 
 ### Insert
+`main.go`:
 ```
 func (merkelTree *MerkelTree) Insert(data []byte) ([]byte, error)
 ```
@@ -32,19 +64,34 @@ as the hash is created from `data`.<br><br>
 In a production Merkel Tree, this duplicate condition wouldn't be possible as data would be tied to a unique entry timestamp, making a duplicate insert impossible (unless it's under malicious intent).
 
 ### Update
+`main.go`:
 ```
 func (merkelTree *MerkelTree) Update(newData, hash []byte) ([]byte, error)
 ```
 `Update` takes in `newData` that will be overwriting the data that exists at `hash` and return a new `hash` for the new data.<br><br>
 `Update` has support for stale hashes. If the data at `hash` has been updated more than once, all historical `hash`s that node has always had will be valid for lookup as the lookup structure uses a <a href="https://en.wikibooks.org/wiki/Data_Structures/Hash_Tables">chained hashmap</a> to preserve historical hashes.
 
+### MerkelProof data structures:
+`proof.go`:
+```
+type MerkelProof struct {
+	LeafHash   []byte
+	ProofList  [][]byte
+	Directions []bool
+}
+```
+Struct for the merkel proof itself. The proof list holds the hashes of all the nodes required to create the proof, the directions taken on the way up the tree (important for proof verification) as well as the original leaf node for this proof.
+
+
 ### GenerateProof
+`proof.go`:
 ```
 func (merkelTree *MerkelTree) GenerateProof(leafHash []byte) (*MerkelProof, error)
 ```
 `GenerateProof` creates a new proof for the node referenced by `leafHash`. It returns a `MerkelProof` if successful or `error` otherwise; in cases of an invalid hash that fails during inital lookup.
 
 ### VerifyProof
+`proof.go`:
 ```
 func VerifyProof(proof *MerkelProof, rootHash []byte) bool
 ```
