@@ -1,6 +1,8 @@
 # MerkelTree
 Also, I realized too late that I spelt it Merkel instead of Merkle :'(
 
+## IMPORTANT: There's an accompanying domcument `Merkle Tree Design Document.pdf`. This is a supporting document for the code in this repo as is meant to be read as a companion to this code.
+
 
 ## API reference
 This is a repository for a Merket Tree implementation project.  The following operations are implemented:
@@ -134,6 +136,11 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("proofB is ", VerifyProof(proofB, tree.root.hash))
+	tree.GenerateProof(nil)
+	tree.Insert(nil)
+	tree.Update(nil, nil)
+	tree.Lookup(nil)
+	VerifyProof(nil, nil)
 }
 ```
 
