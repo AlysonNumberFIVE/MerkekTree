@@ -1,6 +1,6 @@
 # MerkelTree
 
-
+## Table of contents
 - API reference
 - How to run it
 - Documentation
