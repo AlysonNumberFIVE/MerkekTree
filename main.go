@@ -387,4 +387,10 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("proofB is ", VerifyProof(proofB, tree.root.hash))
+
+	tree.GenerateProof(nil)
+	tree.Insert(nil)
+	tree.Update(nil, nil)
+	tree.Lookup(nil)
+	VerifyProof(nil, nil)
 }
